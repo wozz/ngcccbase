@@ -8,11 +8,12 @@ from pycoin.encoding import bitcoin_address_to_hash160_sec,\
     wif_to_tuple_of_secret_exponent_compressed
 from pycoin.serialize import b2h, b2h_rev
 
-from pycoin.tx import SecretExponentSolver
+from pycoin.tx.script.solvers import canonical_solver
 from pycoin.tx.Tx import Tx, SIGHASH_ALL
 from pycoin.tx.TxIn import TxIn
 from pycoin.tx.TxOut import TxOut
 
+from pycoin.tx.tx_utils import LazySecretExponentDB
 from pycoin.tx.script import tools
 from pycoin.tx.script.vm import verify_script
 
@@ -45,7 +46,7 @@ def construct_standard_tx(composed_tx_spec, is_test):
 def sign_tx(tx, utxo_list, is_test):
     secret_exponents = [utxo.address_rec.rawPrivKey
                         for utxo in utxo_list if utxo.address_rec]
-    solver = SecretExponentSolver(secret_exponents)
+    h160 = LazySecretExponentDB(secret_exponents)
     txins = tx.txs_in[:]
     hash_type = SIGHASH_ALL
     for txin_idx in xrange(len(txins)):
@@ -61,7 +62,7 @@ def sign_tx(tx, utxo_list, is_test):
         txout_script = utxo.script.decode('hex')
         signature_hash = tx.signature_hash(
             txout_script, txin_idx, hash_type=hash_type)
-        txin_script = solver(txout_script, signature_hash, hash_type)
+        txin_script = canonical_solver(txout_script, signature_hash, hash_type, h160)
         txins[txin_idx] = TxIn(blank_txin.previous_hash,
                                blank_txin.previous_index,
                                txin_script,
