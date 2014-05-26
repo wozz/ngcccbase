@@ -46,7 +46,7 @@ def construct_standard_tx(composed_tx_spec, is_test):
 def sign_tx(tx, utxo_list, is_test):
     secret_exponents = [utxo.address_rec.rawPrivKey
                         for utxo in utxo_list if utxo.address_rec]
-    h160 = LazySecretExponentDB(secret_exponents)
+    h160 = LazySecretExponentDB(secret_exponents, {})
     txins = tx.txs_in[:]
     hash_type = SIGHASH_ALL
     for txin_idx in xrange(len(txins)):
