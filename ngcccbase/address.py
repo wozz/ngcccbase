@@ -72,4 +72,4 @@ class LooseAddressRecord(AddressRecord):
         self.rawPrivKey = from_bytes_32(bin_privkey[1:])
         self.publicPoint = BasePoint * self.rawPrivKey
         self.address = public_pair_to_bitcoin_address(
-            self.publicPoint.pair(), compressed=False, is_test=self.testnet)
+            self.publicPoint.pair(), compressed=False)

@@ -43,5 +43,4 @@ class ColoredCoinContext(object):
             cdbuilder, self.blockchain_state, self.cdstore, self.colormap)
 
     def raw_to_address(self, raw_address):
-        return hash160_sec_to_bitcoin_address(raw_address,
-                                              is_test=self.testnet)
+        return hash160_sec_to_bitcoin_address(raw_address)
